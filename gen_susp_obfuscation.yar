@@ -41,3 +41,77 @@ rule SUSP_Double_Base64_Encoded_Executable {
    condition:
       1 of them
 }
+
+rule SUSP_Reversed_Base64_Encoded_EXE {
+   meta:
+      description = "Detects an base64 encoded executable with reversed characters"
+      author = "Florian Roth"
+      date = "2020-04-06"
+      reference = "Internal Research"
+      score = 80
+      type = "file"
+      hash1 = "7e6d9a5d3b26fd1af7d58be68f524c4c55285b78304a65ec43073b139c9407a8"
+   strings:
+      $s1 = "AEAAAAEQATpVT"
+      $s2 = "AAAAAAAAAAoVT"
+      $s3 = "AEAAAAEAAAqVT"
+      $s4 = "AEAAAAIAAQpVT"
+      $s5 = "AEAAAAMAAQqVT"
+
+      $sh1 = "SZk9WbgM1TEBibpBib1JHIlJGI09mbuF2Yg0WYyd2byBHIzlGaU" ascii
+      $sh2 = "LlR2btByUPREIulGIuVncgUmYgQ3bu5WYjBSbhJ3ZvJHcgMXaoR" ascii
+      $sh3 = "uUGZv1GIT9ERg4Wag4WdyBSZiBCdv5mbhNGItFmcn9mcwBycphGV" ascii
+   condition:
+      filesize < 10000KB and 1 of them
+}
+
+rule SUSP_Script_Base64_Blocks_Jun20_1 {
+   meta:
+      description = "Detects suspicious file with base64 encoded payload in blocks"
+      author = "Florian Roth"
+      reference = "https://posts.specterops.io/covenant-v0-5-eee0507b85ba"
+      date = "2020-06-05"
+      score = 70
+   strings:
+      $sa1 = "<script language=" ascii
+      $sb2 = { 41 41 41 22 2B 0D 0A 22 41 41 41 }
+   condition:
+      all of them
+}
+
+rule SUSP_Reversed_Hacktool_Author {
+   meta:
+      description = "Detects a suspicious path traversal into a Windows folder"
+      author = "Florian Roth"
+      reference = "https://hackingiscool.pl/cmdhijack-command-argument-confusion-with-path-traversal-in-cmd-exe/"
+      date = "2020-06-10"
+      score = 65
+      type = "file"
+   strings:
+      $x1 = "iwiklitneg" fullword ascii wide
+      $x2 = " eetbus@ " ascii wide
+   condition:
+      filesize < 4000KB and
+      1 of them
+}
+
+rule SUSP_Base64_Encoded_Hacktool_Dev {
+   meta:
+      description = "Detects a suspicious base64 encoded keyword"
+      author = "Florian Roth"
+      reference = "https://twitter.com/cyb3rops/status/1270626274826911744"
+      date = "2020-06-10"
+      score = 65
+   strings:
+      $ = "QGdlbnRpbGtpd2" ascii wide 
+      $ = "BnZW50aWxraXdp" ascii wide 
+      $ = "AZ2VudGlsa2l3a" ascii wide
+      $ = "QGhhcm1qMH" ascii wide
+      $ = "BoYXJtajB5" ascii wide
+      $ = "AaGFybWowe" ascii wide
+      $ = "IEBzdWJ0ZW" ascii wide
+      $ = "BAc3VidGVl" ascii wide
+      $ = "gQHN1YnRlZ" ascii wide
+   condition:
+      filesize < 6000KB and 1 of them
+}

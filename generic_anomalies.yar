@@ -48,7 +48,7 @@ rule Cloaked_as_JPG {
    condition:
       uint16be(0x00) != 0xFFD8 and
       extension == ".jpg" and
-      not uint32be(0) == 0x4749463839 and /* GIF Header */
+      not uint32be(0) == 0x47494638 and uint8(4) == 0x39 and /* GIF89 Header */
       /* and
       not filepath contains "ASP.NET" */
       not $fp1 in (0..30) and
@@ -160,7 +160,7 @@ rule Suspicious_Size_lsass_exe {
     condition:
         uint16(0) == 0x5a4d
         and filename == "lsass.exe"
-        and ( filesize < 10KB or filesize > 58KB )
+        and ( filesize < 10KB or filesize > 100KB )
 }
 
 rule Suspicious_Size_svchost_exe {
@@ -286,7 +286,7 @@ rule Suspicious_Size_wininit_exe {
     condition:
         uint16(0) == 0x5a4d
         and filename == "wininit.exe"
-        and ( filesize < 90KB or filesize > 400KB )
+        and ( filesize < 90KB or filesize > 450KB )
 }
 
 rule Suspicious_AutoIt_by_Microsoft {
